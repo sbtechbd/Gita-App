@@ -3,7 +3,16 @@ import axios from 'axios';
 
 export default {
   name: 'App',
+  data() {
+    return {
+      chapters: [],
+      currentVerses: [],
+      currentContent: [],
+    };
+  },    
   mounted() {
+    // Fetch all chapters
+    
     axios.get('https://bhagavad-gita3.p.rapidapi.com/v2/chapters/', {
       headers: {
         'X-RapidAPI-Key': '1993953dc4mshd75d88b14c0afb8p1ccb21jsn0ae34107db29',
@@ -11,13 +20,44 @@ export default {
       }
     })
     .then(response => {
-      console.log(response.data);
+      this.chapters = response.data; // Assign response data to the "chapters" data property
     })
     .catch(error => {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching chapters:', error);
+    });
+
+    // Fetch current chapter 
+    axios.get('https://bhagavad-gita3.p.rapidapi.com/v2/chapters/1/verses/1/', {
+      headers: {
+        'X-RapidAPI-Key': '1993953dc4mshd75d88b14c0afb8p1ccb21jsn0ae34107db29',
+        'X-RapidAPI-Host': 'bhagavad-gita3.p.rapidapi.com'
+      }
+    })
+    .then(response => {
+      this.currentVerses = response.data; // Assign response data to the "currentVerses" data property
+    })
+    .catch(error => {
+      console.error('Error fetching current verses:', error);
     });
   }
 };
+
+
+ // Fetch  currentContent body
+ axios.get('https://bhagavad-gita3.p.rapidapi.com/v2/chapters/1/verses/1/', {
+      headers: {
+        'X-RapidAPI-Key': '1993953dc4mshd75d88b14c0afb8p1ccb21jsn0ae34107db29',
+        'X-RapidAPI-Host': 'bhagavad-gita3.p.rapidapi.com'
+      }
+    })
+    .then(response => {
+      this.currentContent = response.data.description; // Assign response data to the "currentContent" data property
+    })
+    .catch(error => {
+      console.error('Error fetching current verses:', error);
+    });
+  
+
 
 </script>
 
@@ -47,11 +87,13 @@ export default {
           <div class="flex-1 px-4">
             <select class="gita-input" name="" id="">
               <option value="">Select Chapters</option>
+              <option v-for="chapter in chapters" value=""> {{chapter.name_translated}} - {{chapter.name}}</option>
             </select>
           </div>
 
           <div class="flex-1 px-4 text-center">
             <div class="font-bold mb-1 text-lg"> <!-- Corrected spelling from font-blod to font-bold -->
+              
               <p>Chapter Name</p>
             </div>
           </div>
@@ -59,17 +101,23 @@ export default {
           <div class="flex-1 px-4">
             <select class="gita-input" name="" id="">
               <option value="">Select Verses</option>
+              <option v-for ="verse in currentVerses"  :key="verse" value="">{{currentVerses.verse_number}}</option>
             </select>
           </div>
         </div>
 
-          <!-- body Content -->
+          <!-- body Content Start-->
           <div class="flex-1 px-4"> 
-           <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe itaque dolores commodi recusandae aut odio ducimus explicabo harum ipsa quasi nobis quisquam voluptates consequatur magni iure, nihil quibusdam voluptatibus laudantium? </p>
-
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate eaque dolores itaque inventore voluptatum explicabo vel? Facere mollitia praesentium nostrum, deserunt, repellat numquam voluptas nobis dolorum ullam repudiandae distinctio sed?</p>
+            <div v-if="currentContent.length > 0">
+                <div v-for="description in currentContent" :key="description">
+                  {{ currentContent.description }}
+                </div>
+            </div>
+            <div v-else>
+              <p>Loading...</p>
+            </div>
           </div>
-
+           <!-- body Content End-->
           
       </div>
     </div>
@@ -77,7 +125,7 @@ export default {
     <!-- Footer Content -->
     <div class="container py-6">
       <div class="bg-white p-4 shadow rounded text-center"> 
-        <p>Footer</p>
+        <p>Developed by Sbtechbd Technologies</p>
     </div>
     </div>
      <!-- End Footer Content -->

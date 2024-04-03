@@ -1,3 +1,27 @@
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'App',
+  mounted() {
+    axios.get('https://bhagavad-gita3.p.rapidapi.com/v2/chapters/', {
+      headers: {
+        'X-RapidAPI-Key': '1993953dc4mshd75d88b14c0afb8p1ccb21jsn0ae34107db29',
+        'X-RapidAPI-Host': 'bhagavad-gita3.p.rapidapi.com'
+      }
+    })
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+  }
+};
+
+</script>
+
+
 <template>
   <div class="min-h-screen bg-gray-100">
     <div class="container py-6">
@@ -63,6 +87,6 @@
 </template>
 
 
-<style scoped>
+<style>
 
 </style>
